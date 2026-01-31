@@ -13,6 +13,7 @@ contract Errors {
 	error INVALID_VALUE(uint256 _value);
 	error MISMATCH();
 	error NATIVE_TOKEN_NOT_SUPPORTED();
+	error NOT_REGISTERED(address _account);
 	error TOKEN_NOT_ENABLED(address _account, address _token);
 	error TRANSFER_FAILED();
 	error ZERO_BYTES();

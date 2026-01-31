@@ -7,10 +7,11 @@ dotenv.config()
 export function verifyEnvVars() {
 	const {
 		ETHERSCAN_API_KEY,
+		ONE_INCH_API_KEY,
 		RPC_HTTPS_ARBITRUM,
 		RPC_HTTPS_AVALANCHE,
-		RPC_HTTPS_BASE,
 		RPC_HTTPS_ETHEREUM,
+		RPC_HTTPS_BASE,
 		RPC_HTTPS_OPTIMISM,
 		RPC_HTTPS_POLYGON,
 		WALLET_DEPLOYER_PRIVATE_KEY
@@ -19,6 +20,10 @@ export function verifyEnvVars() {
 	const register = {
 		etherscan: {
 			apiKey: ensureEnvVar(ETHERSCAN_API_KEY, 'ETHERSCAN_API_KEY')
+		},
+
+		oneInch: {
+			apiKey: ensureEnvVar(ONE_INCH_API_KEY, 'ONE_INCH_API_KEY')
 		},
 
 		rpc: {

@@ -10,6 +10,7 @@
 		"lint:fix": "eslint --fix",
 		"lint:sol": "solhint contracts/**.sol --fix",
 		"task:register": "hardhat 01-register --network",
+		"task:unregister": "hardhat 02-unregister --network",
 		"upgrade:allMain": "hardhat deploy --network 'Base' --tags upgrade && hardhat deploy --network 'OP Mainnet' --tags upgrade && hardhat deploy --network 'Polygon' --tags upgrade"
 	},
 	"dependencies": {

@@ -99,6 +99,7 @@ contract PaymentManager is
 		if (_tokens.length != _enableds.length) revert MISMATCH();
 
 		for (uint256 i = 0; i < _tokens.length; ) {
+			if (isZeroAddress(_tokens[i])) revert INVALID_ADDRESS(_tokens[i]);
 			tokens[msg.sender][_tokens[i]] = _enableds[i];
 
 			unchecked {
@@ -120,6 +121,7 @@ contract PaymentManager is
 		bytes[] calldata _routes
 	) external onlyOwner {
 		// 1. initial validations
+		if (!registry[_from]) revert NOT_REGISTERED(_from);
 		if (isZeroAddress(_from)) revert INVALID_ADDRESS(_from);
 		if (_tokens.length != _amounts.length) revert MISMATCH();
 		if (_amounts.length != _routes.length) revert MISMATCH();
@@ -153,6 +155,8 @@ contract PaymentManager is
 				++i;
 			}
 		}
+
+		emit PaymentExecuted(_from, _tokens, _amounts, _routes);
 	}
 
 	function recoverFunds(address _token, address _to) external onlyOwner {
@@ -172,13 +176,20 @@ contract PaymentManager is
 		emit Registered(msg.sender, _tokens);
 	}
 
+	function unregister() external {
+		if (!registry[msg.sender]) revert NOT_REGISTERED(msg.sender);
+		registry[msg.sender] = false;
+
+		emit Unregistered(msg.sender);
+	}
+
 	/// ===============================
 	/// = Private / Internal Functions =
 	/// ===============================
 
 	function _setTokens(address[] calldata _tokens) private {
 		for (uint256 i = 0; i < _tokens.length; ) {
-			if (isZeroAddress(_tokens[i])) revert INVALID_ADDRESS(_tokens[i]);
+			if (isZeroAddress(_tokens[i])) continue;
 			tokens[msg.sender][_tokens[i]] = true;
 
 			unchecked {
