@@ -3,7 +3,7 @@
 	"scripts": {
 		"compile": "solhint contracts/**/*.sol && hardhat compile",
 		"deploy": "hardhat deploy --network",
-		"deploy:allMain": "hardhat deploy --network 'Arbitrum One' && hardhat deploy --network 'Base' && hardhat deploy --network 'Ethereum' && hardhat deploy --network 'OP Mainnet' && hardhat deploy --network 'Polygon'",
+		"deploy:allMain": "hardhat deploy --network 'Base' && hardhat deploy --network 'OP Mainnet' && hardhat deploy --network 'Polygon'",
 		"deploy:allTest": "hardhat deploy --network 'Arbitrum Sepolia' && hardhat deploy --network 'OP Sepolia' && hardhat deploy --network 'Polygon Amoy'",
 		"format": "prettier --write .",
 		"lint": "eslint",
