@@ -4,19 +4,12 @@ pragma solidity ^0.8.30;
 // third party
 /// openzeppelin
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 
 // local
 /// interfaces
 import {IPaymentManager} from "./core/interfaces/IPaymentManager.sol";
 
-contract PaymentManager is
-	IPaymentManager,
-	Initializable,
-	OwnableUpgradeable,
-	ReentrancyGuardUpgradeable
-{
+contract PaymentManager is IPaymentManager, Initializable {
 	/// =========================
 	/// ========= Errors ========
 	/// =========================
@@ -45,7 +38,7 @@ contract PaymentManager is
 	/// ====== Initializer ======
 	/// =========================
 
-	// function __PaymentManager_init() internal onlyInitializing {}
+	function __PaymentManager_init() internal onlyInitializing {}
 
 	receive() external payable {}
 

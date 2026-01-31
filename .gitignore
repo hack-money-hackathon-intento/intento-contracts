@@ -3,8 +3,10 @@ node_modules
 !.env.example
 
 # Hardhat files
+.openzeppelin
 /cache
 /artifacts
+/deployments
 
 # TypeChain files
 /typechain
