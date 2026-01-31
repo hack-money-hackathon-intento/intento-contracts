@@ -1,17 +1,19 @@
 import { Address } from 'viem'
 
+export type TokensDtoByChain = Record<string, TokenDto[]>
+
 export interface TokenDto {
+	chainId: number
 	address: Address
 	symbol: string
-	decimals: number
 	name: string
-	logoURI: string
-	eip2612: boolean
-	tags: string[]
+	decimals: number
+	priceUSD: string
+	coinKey: string
+	logoURI?: string
 }
 
 export interface TokensResponse {
-	tokens: {
-		[key: Address]: TokenDto
-	}
+	tokens: TokensDtoByChain
+	extended: boolean
 }

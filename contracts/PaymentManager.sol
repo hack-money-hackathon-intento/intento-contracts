@@ -64,19 +64,11 @@ contract PaymentManager is
 		enableds = new bool[](_tokens.length);
 
 		for (uint256 i = 0; i < _tokens.length; ) {
-			if (!tokens[_account][_tokens[i]]) {
-				enableds[i] = false;
-				unchecked {
-					++i;
-				}
-				continue;
-			}
+			enableds[i] = tokens[_account][_tokens[i]];
 
 			unchecked {
 				++i;
 			}
-
-			enableds[i] = true;
 		}
 	}
 
@@ -189,8 +181,9 @@ contract PaymentManager is
 
 	function _setTokens(address[] calldata _tokens) private {
 		for (uint256 i = 0; i < _tokens.length; ) {
-			if (isZeroAddress(_tokens[i])) continue;
-			tokens[msg.sender][_tokens[i]] = true;
+			if (!isZeroAddress(_tokens[i])) {
+				tokens[msg.sender][_tokens[i]] = true;
+			}
 
 			unchecked {
 				++i;

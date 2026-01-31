@@ -45,7 +45,7 @@ const upgradePaymentManager: DeployFunction = async function (
 		`New PaymentManager implementation deployed at: ${newImplementationAddress}`
 	)
 
-	await wait(3000)
+	await wait(5000)
 
 	if (!developmentChains.includes(network.name)) {
 		await verify(newImplementationAddress, [])

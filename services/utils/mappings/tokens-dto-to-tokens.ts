@@ -1,26 +1,21 @@
-import { Address, getAddress } from 'viem'
+import { getAddress } from 'viem'
 
-import { Token, Tokens } from '@/models/tokens.model'
-import { TokensResponse } from '@/services/utils/dtos/tokens.dto'
+import { TokensByChain } from '@/models/tokens.model'
 
-export function mapTokensDtoToTokens(
-	chainId: number,
-	response: TokensResponse
-): Tokens {
-	const tokens: Token[] = Object.entries(response.tokens).map(
-		([address, token]) => ({
-			address: getAddress(address as Address),
+import { TokensResponse } from '../dtos/tokens.dto'
+
+export function mapTokensDtoToTokens(response: TokensResponse): TokensByChain {
+	return Object.entries(response.tokens).reduce((acc, [chainId, tokenDtos]) => {
+		acc[chainId] = tokenDtos.map(token => ({
+			chainId: Number(chainId),
+			address: getAddress(token.address),
 			symbol: token.symbol,
 			decimals: token.decimals,
 			name: token.name,
-			logoURI: token.logoURI,
-			eip2612: token.eip2612,
-			tags: token.tags
-		})
-	)
-
-	return {
-		chainId,
-		tokens
-	}
+			priceUSD: token.priceUSD,
+			coinKey: token.coinKey,
+			logoURI: token.logoURI
+		}))
+		return acc
+	}, {} as TokensByChain)
 }
