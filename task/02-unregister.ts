@@ -38,7 +38,7 @@ task('02-unregister', 'unregister account').setAction(async (_, hre) => {
 			const txUnregister = await paymentManager.write.unregister()
 
 			await publicClient.waitForTransactionReceipt({ hash: txUnregister })
-			await wait(10000)
+			await wait(1000)
 
 			const isRegisteredAfter = await paymentManager.read.isRegistered([
 				deployerAddress
