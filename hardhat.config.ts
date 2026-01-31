@@ -122,7 +122,17 @@ const config: HardhatUserConfig = {
 	},
 
 	etherscan: {
-		apiKey: register.etherscan.apiKey
+		apiKey: register.etherscan.apiKey,
+		customChains: [
+			{
+				network: 'optimisticSepolia',
+				chainId: optimismSepolia.id,
+				urls: {
+					apiURL: 'https://api-sepolia-optimistic.etherscan.io/api',
+					browserURL: 'https://sepolia-optimism.etherscan.io'
+				}
+			}
+		]
 	},
 
 	mocha: { timeout: 200000 }
