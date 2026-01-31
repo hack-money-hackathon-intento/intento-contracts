@@ -2,6 +2,7 @@ import 'tsconfig-paths/register'
 import '@nomicfoundation/hardhat-toolbox-viem'
 import '@openzeppelin/hardhat-upgrades'
 import 'hardhat-deploy'
+import '@/task'
 
 import type { HardhatUserConfig } from 'hardhat/config'
 import {
