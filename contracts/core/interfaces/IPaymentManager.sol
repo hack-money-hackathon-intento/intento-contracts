@@ -12,7 +12,7 @@ interface IPaymentManager {
 		uint256 amount
 	);
 
-	event Registered(address indexed account);
+	event Registered(address indexed account, address[] tokens);
 
 	event TokensSet(address indexed account, address[] tokens, bool[] enableds);
 
@@ -49,7 +49,7 @@ interface IPaymentManager {
 		bytes[] calldata _routes
 	) external;
 
-	function register() external;
-
 	function recoverFunds(address _token, address _to) external;
+
+	function register(address[] calldata _tokens) external;
 }

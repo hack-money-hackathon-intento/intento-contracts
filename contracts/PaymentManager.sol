@@ -164,15 +164,28 @@ contract PaymentManager is
 		emit FundsRecovered(_token, _to, amount);
 	}
 
-	function register() external {
+	function register(address[] calldata _tokens) external {
 		if (registry[msg.sender]) revert ALREADY_REGISTERED(msg.sender);
 		registry[msg.sender] = true;
-		emit Registered(msg.sender);
+		_setTokens(_tokens);
+
+		emit Registered(msg.sender, _tokens);
 	}
 
 	/// ===============================
 	/// = Private / Internal Functions =
 	/// ===============================
+
+	function _setTokens(address[] calldata _tokens) private {
+		for (uint256 i = 0; i < _tokens.length; ) {
+			if (isZeroAddress(_tokens[i])) revert INVALID_ADDRESS(_tokens[i]);
+			tokens[msg.sender][_tokens[i]] = true;
+
+			unchecked {
+				++i;
+			}
+		}
+	}
 
 	function _pullFromUser(
 		address _from,

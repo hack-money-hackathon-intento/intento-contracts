@@ -8,19 +8,21 @@
 		"format": "prettier --write .",
 		"lint": "eslint",
 		"lint:fix": "eslint --fix",
-		"lint:sol": "solhint contracts/**.sol --fix"
+		"lint:sol": "solhint contracts/**.sol --fix",
+		"upgrade:allMain": "hardhat deploy --network 'Base' --tags upgrade && hardhat deploy --network 'OP Mainnet' --tags upgrade && hardhat deploy --network 'Polygon' --tags upgrade"
 	},
 	"dependencies": {
 		"@openzeppelin/contracts": "^5.4.0",
 		"@openzeppelin/contracts-upgradeable": "^5.4.0",
+		"axios": "^1.13.4",
 		"hardhat": "^2.28.4",
-		"hardhat-deploy": "^1.0.4"
+		"hardhat-deploy": "^1.0.4",
+		"viem": "^2.45.1"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.2",
 		"@nomicfoundation/hardhat-toolbox-viem": "^4.1.2",
 		"@openzeppelin/hardhat-upgrades": "^3.9.1",
-		"dotenv": "^17.2.3",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.5",
