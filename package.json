@@ -1,8 +1,29 @@
 {
-  "dependencies": {
-    "hardhat": "^2.28.4"
-  },
-  "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox-viem": "^4.1.2"
-  }
+	"name": "intento-contracts",
+	"scripts": {
+		"compile": "solhint contracts/**/*.sol && hardhat compile",
+		"deploy": "hardhat deploy --network",
+		"format": "prettier --write .",
+		"lint": "eslint",
+		"lint:fix": "eslint --fix",
+		"lint:sol": "solhint contracts/**.sol --fix"
+	},
+	"dependencies": {
+		"hardhat": "^2.28.4"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.39.2",
+		"@nomicfoundation/hardhat-toolbox-viem": "^4.1.2",
+		"eslint": "^9.39.2",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-prettier": "^5.5.5",
+		"eslint-plugin-simple-import-sort": "^12.1.1",
+		"eslint-plugin-unused-imports": "^4.3.0",
+		"globals": "^17.2.0",
+		"prettier": "^3.8.1",
+		"prettier-plugin-solidity": "^2.2.1",
+		"solhint": "^6.0.3",
+		"solhint-plugin-prettier": "^0.1.0",
+		"typescript-eslint": "^8.54.0"
+	}
 }
