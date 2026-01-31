@@ -14,8 +14,6 @@ export default [
 			'cache',
 			'coverage',
 			'deployments',
-			'dist',
-			'build',
 			'assets'
 		]
 	},
@@ -40,6 +38,7 @@ export default [
 			globals: { ...globals.node }
 		}
 	})),
+
 	{
 		files: ['**/*.{js,cjs,mjs,ts,tsx}'],
 		plugins: {
