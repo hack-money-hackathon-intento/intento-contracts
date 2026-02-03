@@ -107,12 +107,14 @@ contract PaymentManager is
 	/// ===============================
 
 	function executePayment(
+		bytes calldata _orderId,
 		address _from,
 		address[] calldata _tokens,
 		uint256[] calldata _amounts,
 		bytes[] calldata _routes
 	) external onlyOwner {
 		// 1. initial validations
+		if (isZeroBytes(_orderId)) revert ZERO_BYTES();
 		if (!registry[_from]) revert NOT_REGISTERED(_from);
 		if (isZeroAddress(_from)) revert INVALID_ADDRESS(_from);
 		if (_tokens.length != _amounts.length) revert MISMATCH();
@@ -148,7 +150,7 @@ contract PaymentManager is
 			}
 		}
 
-		emit PaymentExecuted(_from, _tokens, _amounts, _routes);
+		emit PaymentExecuted(_orderId, _from, _tokens, _amounts, _routes);
 	}
 
 	function recoverFunds(address _token, address _to) external onlyOwner {
@@ -160,10 +162,13 @@ contract PaymentManager is
 		emit FundsRecovered(_token, _to, amount);
 	}
 
-	function register(address[] calldata _tokens) external {
+	function register(
+		address[] calldata _tokens,
+		bool[] calldata _enableds
+	) external {
 		if (registry[msg.sender]) revert ALREADY_REGISTERED(msg.sender);
 		registry[msg.sender] = true;
-		_setTokens(_tokens);
+		_setTokens(_tokens, _enableds);
 
 		emit Registered(msg.sender, _tokens);
 	}
@@ -179,10 +184,13 @@ contract PaymentManager is
 	/// = Private / Internal Functions =
 	/// ===============================
 
-	function _setTokens(address[] calldata _tokens) private {
+	function _setTokens(
+		address[] calldata _tokens,
+		bool[] calldata _enableds
+	) private {
 		for (uint256 i = 0; i < _tokens.length; ) {
 			if (!isZeroAddress(_tokens[i])) {
-				tokens[msg.sender][_tokens[i]] = true;
+				tokens[msg.sender][_tokens[i]] = _enableds[i];
 			}
 
 			unchecked {

@@ -13,6 +13,7 @@ interface IPaymentManager {
 	);
 
 	event PaymentExecuted(
+		bytes indexed orderId,
 		address indexed from,
 		address[] tokens,
 		uint256[] amounts,
@@ -52,6 +53,7 @@ interface IPaymentManager {
 	/// ===============================
 
 	function executePayment(
+		bytes calldata _orderId,
 		address _from,
 		address[] calldata _tokens,
 		uint256[] calldata _amounts,
@@ -60,7 +62,10 @@ interface IPaymentManager {
 
 	function recoverFunds(address _token, address _to) external;
 
-	function register(address[] calldata _tokens) external;
+	function register(
+		address[] calldata _tokens,
+		bool[] calldata _enableds
+	) external;
 
 	function unregister() external;
 }
