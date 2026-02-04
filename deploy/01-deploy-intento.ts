@@ -10,7 +10,7 @@ import {
 import { verify } from '@/helpers/verify'
 import { wait } from '@/helpers/wait.util'
 
-const deployPaymentManager: DeployFunction = async (
+const deployIntento: DeployFunction = async (
 	hre: HardhatRuntimeEnvironment
 ) => {
 	const { ethers, upgrades } = hre
@@ -20,13 +20,13 @@ const deployPaymentManager: DeployFunction = async (
 
 	log(`Network: ${network.name}`)
 	log('----------------------------------------------------')
-	log('Deploying PaymentManager and waiting for confirmations...')
+	log('Deploying Intento and waiting for confirmations...')
 
-	const args: unknown[] = []
+	const args: unknown[] = [deployer]
 
-	const PaymentManager = await ethers.getContractFactory('PaymentManager')
+	const Intento = await ethers.getContractFactory('Intento')
 
-	const proxy = await upgrades.deployProxy(PaymentManager, args)
+	const proxy = await upgrades.deployProxy(Intento, args)
 
 	const deployTx = proxy.deploymentTransaction()
 
@@ -39,29 +39,29 @@ const deployPaymentManager: DeployFunction = async (
 	await proxy.waitForDeployment()
 
 	const proxyAddress = (await proxy.getAddress()) as Address
-	log(`PaymentManager proxy deployed at: ${proxyAddress}`)
+	log(`Intento proxy deployed at: ${proxyAddress}`)
 
 	await wait(5000)
 
 	const implementationAddress = await getImplementationAddress(proxyAddress)
-	log(`PaymentManager implementation deployed at: ${implementationAddress}`)
+	log(`Intento implementation deployed at: ${implementationAddress}`)
 
 	const proxyAdmin: string = await getProxyAdmin(proxyAddress)
-	log(`PaymentManager proxy admin: ${proxyAdmin}`)
+	log(`Intento proxy admin: ${proxyAdmin}`)
 
 	if (!developmentChains.includes(network.name)) {
 		await verify(proxyAddress, [])
 	}
 
 	const artifact: ExtendedArtifact =
-		await deployments.getExtendedArtifact('PaymentManager')
+		await deployments.getExtendedArtifact('Intento')
 
-	await save('PaymentManager', {
+	await save('Intento', {
 		address: proxyAddress,
 		implementation: implementationAddress,
 		...artifact
 	})
 }
 
-export default deployPaymentManager
-deployPaymentManager.tags = ['deploy', 'payment-manager']
+export default deployIntento
+deployIntento.tags = ['deploy', 'intento']

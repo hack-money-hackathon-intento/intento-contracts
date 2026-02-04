@@ -10,13 +10,13 @@ import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/Own
 
 // local
 /// interfaces
-import {IPaymentManager} from "./core/interfaces/IPaymentManager.sol";
+import {IIntento} from "./core/interfaces/IIntento.sol";
 /// libraries
 import {Errors} from "./core/libraries/Errors.sol";
 import {Native} from "./core/libraries/Native.sol";
 
-contract PaymentManager is
-	IPaymentManager,
+contract Intento is
+	IIntento,
 	Initializable,
 	OwnableUpgradeable,
 	Native,
@@ -45,8 +45,12 @@ contract PaymentManager is
 	/// ====== Initializer ======
 	/// =========================
 
-	function __PaymentManager_init() internal onlyInitializing {
-		__Ownable_init(msg.sender);
+	function initialize(address _owner) external initializer {
+		__Intento_init(_owner);
+	}
+
+	function __Intento_init(address _owner) internal onlyInitializing {
+		__Ownable_init(_owner);
 	}
 
 	receive() external payable {}
@@ -112,7 +116,7 @@ contract PaymentManager is
 		address[] calldata _tokens,
 		uint256[] calldata _amounts,
 		bytes[] calldata _routes
-	) external onlyOwner {
+	) external payable onlyOwner {
 		// 1. initial validations
 		if (isZeroBytes(_orderId)) revert ZERO_BYTES();
 		if (!registry[_from]) revert NOT_REGISTERED(_from);
@@ -133,7 +137,6 @@ contract PaymentManager is
 
 			if (isZeroAddress(to)) revert INVALID_ADDRESS(to);
 			if (isZeroAddress(approval)) revert INVALID_ADDRESS(approval);
-			if (value != 0) revert INVALID_VALUE(value);
 			if (isZeroBytes(data)) revert ZERO_BYTES();
 
 			// 2.3 pull each token from user

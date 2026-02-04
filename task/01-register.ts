@@ -1,14 +1,14 @@
 import { task } from 'hardhat/config'
-import { Address, zeroAddress } from 'viem'
+import { Address, encodeFunctionData } from 'viem'
 
-import { wait } from '@/helpers/wait.util'
+import { routeToBytes } from '@/helpers/route-to-bytes'
 import { liFiService } from '@/services/rest/li-fi'
 import { oneInchService } from '@/services/rest/one-inch'
 
 task('01-register', 'register account').setAction(async (_, hre) => {
 	try {
 		const { getBalances } = oneInchService()
-		const { getTokens } = liFiService()
+		const { getBalances: getBalancesLiFi, getQuote } = liFiService()
 
 		const { deployments, network, viem, getNamedAccounts } = hre
 		const { deployer } = await getNamedAccounts()
@@ -16,13 +16,10 @@ task('01-register', 'register account').setAction(async (_, hre) => {
 
 		const publicClient = await viem.getPublicClient()
 
-		const paymentManagerDeployment = await deployments.get('PaymentManager')
-		const paymentManagerAddress = paymentManagerDeployment.address as Address
+		const intentoDeployment = await deployments.get('Intento')
+		const intentoAddress = intentoDeployment.address as Address
 
-		const paymentManager = await viem.getContractAt(
-			'PaymentManager',
-			paymentManagerAddress
-		)
+		const intento = await viem.getContractAt('Intento', intentoAddress)
 
 		const chainId = network.config.chainId
 
@@ -30,69 +27,76 @@ task('01-register', 'register account').setAction(async (_, hre) => {
 			throw new Error('Chain ID is not set')
 		}
 
-		// check if the account is registered
+		const resultBalances = await getBalancesLiFi(deployerAddress)
 
-		const isRegistered = await paymentManager.read.isRegistered([
-			deployerAddress
+		if (!resultBalances.success || !resultBalances.data) {
+			throw new Error('Failed to get balances')
+		}
+
+		const balances = resultBalances.data
+
+		// for (const balance of balances) {
+		const fromChain = 8453 // Base
+		const toChain = 137 // Polygon
+
+		// for (const token of balance.tokens) {
+		const fromToken = '0x6B2504A03ca4D43d0D73776F6aD46dAb2F2a4cFD' as Address // USDC
+		const toToken = '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359' as Address
+		const fromAmount = '70821914991126524257'
+		const fromAddress = '0xD2Ed7b56fF997DA6f5b7b72Cc7676Bc9BA9B9240' as Address
+		const toAddress = deployerAddress
+		const slippage = 0.005
+		const order = 'FASTEST'
+
+		const resultQuote = await getQuote({
+			fromChain,
+			toChain,
+			fromToken,
+			toToken,
+			fromAmount,
+			fromAddress,
+			toAddress,
+			slippage,
+			order
+		})
+
+		if (!resultQuote.success || !resultQuote.data) {
+			throw new Error('Failed to get quote')
+		}
+
+		const quote = resultQuote.data
+
+		const orderId = '0x1234567890'
+		const from = deployerAddress
+		const tokens = [fromToken]
+		const amounts = [BigInt(fromAmount)]
+		const routes = [routeToBytes(quote)]
+
+		const calldata = encodeFunctionData({
+			abi: intento.abi,
+			functionName: 'executePayment',
+			args: [orderId, from, tokens, amounts, routes]
+		})
+
+		const txExecutePayment = await intento.write.executePayment([
+			orderId,
+			from,
+			tokens,
+			amounts,
+			routes
 		])
 
-		if (isRegistered) {
-			console.log('Account is already registered')
-			return
-		} else {
-			// get balances
-			const response = await getBalances(chainId, deployerAddress)
+		// await publicClient.waitForTransactionReceipt({ hash: txExecutePayment })
 
-			if (!response.success || !response.data) {
-				throw new Error('Failed to get balances')
-			}
+		console.log(txExecutePayment)
 
-			const balances = response.data.balances
+		// }
+		// }
 
-			// get tokens
-			const tokens = await getTokens(chainId)
-
-			if (!tokens.success || !tokens.data) {
-				throw new Error('Failed to get tokens')
-			}
-
-			const balancesAddresses = balances
-				.map(balance => balance.address)
-				.filter(address => address !== zeroAddress)
-
-			const tokensData = tokens.data
-
-			const filteredTokens = tokensData[chainId].filter(token =>
-				balancesAddresses.includes(token.address)
-			)
-
-			const filteredTokensAddresses = filteredTokens.map(token => token.address)
-
-			// are tokens enabled
-			const areTokensEnabled = await paymentManager.read.areTokensEnabled([
-				deployerAddress,
-				filteredTokensAddresses
-			])
-
-			const tokensNotEnabled = filteredTokensAddresses.filter(
-				(_token, index) => !areTokensEnabled[index]
-			)
-
-			console.dir(tokensNotEnabled, { depth: null })
-
-			const txRegister = await paymentManager.write.register([
-				tokensNotEnabled.length > 0 ? tokensNotEnabled : [zeroAddress]
-			])
-
-			await publicClient.waitForTransactionReceipt({ hash: txRegister })
-			await wait(1000)
-
-			const isRegisteredAfter = await paymentManager.read.isRegistered([
-				deployerAddress
-			])
-
-			console.log(`Is registered after: ${isRegisteredAfter}`)
-		}
+		// check if the account is registered
+		// const isRegistered = await paymentManager.read.isRegistered([
+		// 	deployerAddress
+		// ])
 	} catch (error) {
 		console.error('❌', error)
 	}

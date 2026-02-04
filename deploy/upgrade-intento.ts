@@ -13,25 +13,21 @@ import { getImplementationAddress } from '@/helpers/upgrades/get-implementation-
 import { verify } from '@/helpers/verify'
 import { wait } from '@/helpers/wait.util'
 
-const upgradePaymentManager: DeployFunction = async function (
+const upgradeIntento: DeployFunction = async function (
 	hre: HardhatRuntimeEnvironment
 ) {
 	const { deployments, network } = hre
 	const { log, get, save } = deployments
 
-	const inhabitDeployment: Deployment = await get('PaymentManager')
-	const proxyAddress: string = inhabitDeployment.address
+	const intentoDeployment: Deployment = await get('Intento')
+	const proxyAddress: string = intentoDeployment.address
 
 	log('-----------------------------------')
-	log('Upgrading PaymentManager...')
+	log('Upgrading Intento...')
 
-	const paymentManager: ContractFactory =
-		await ethers.getContractFactory('PaymentManager')
+	const intento: ContractFactory = await ethers.getContractFactory('Intento')
 
-	const upgradedProxy = await upgrades.upgradeProxy(
-		proxyAddress,
-		paymentManager
-	)
+	const upgradedProxy = await upgrades.upgradeProxy(proxyAddress, intento)
 
 	await wait(3000)
 
@@ -41,9 +37,7 @@ const upgradePaymentManager: DeployFunction = async function (
 		upgradedProxyAddress as Address
 	)
 
-	log(
-		`New PaymentManager implementation deployed at: ${newImplementationAddress}`
-	)
+	log(`New Intento implementation deployed at: ${newImplementationAddress}`)
 
 	await wait(5000)
 
@@ -52,20 +46,20 @@ const upgradePaymentManager: DeployFunction = async function (
 	}
 
 	const artifact: ExtendedArtifact =
-		await deployments.getExtendedArtifact('PaymentManager')
+		await deployments.getExtendedArtifact('Intento')
 
-	await save('PaymentManager', {
+	await save('Intento', {
 		address: proxyAddress,
 		implementation: newImplementationAddress,
 		...artifact
 	})
 
 	log('-----------------------------------')
-	log(`PaymentManager upgraded successfully!`)
+	log(`Intento upgraded successfully!`)
 	log(`Proxy address: ${proxyAddress}`)
 	log(`New implementation: ${newImplementationAddress}`)
 }
 
-upgradePaymentManager.tags = ['upgrade']
+upgradeIntento.tags = ['upgrade']
 
-export default upgradePaymentManager
+export default upgradeIntento

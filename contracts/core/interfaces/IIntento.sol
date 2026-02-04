@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.30;
 
-interface IPaymentManager {
+interface IIntento {
 	/// =========================
 	/// ========= Events ========
 	/// =========================
@@ -58,7 +58,7 @@ interface IPaymentManager {
 		address[] calldata _tokens,
 		uint256[] calldata _amounts,
 		bytes[] calldata _routes
-	) external;
+	) external payable;
 
 	function recoverFunds(address _token, address _to) external;
 

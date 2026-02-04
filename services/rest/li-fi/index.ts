@@ -1,15 +1,18 @@
-import { tokensService } from './tokens'
+import { walletsIntegrations } from './integrations/balances'
+import { quoteIntegrations } from './integrations/quote'
 
 function getHost(): string {
-	const host: string = 'https://li.quest/v1'
-
-	return host
+	return 'https://li.quest/v1'
 }
 
 export function liFiService() {
 	const host = getHost()
 
-	const { getTokens } = tokensService(host, 'tokens')
+	const { getBalances } = walletsIntegrations(host, 'wallets')
+	const { getQuote } = quoteIntegrations(host, 'quote')
 
-	return { getTokens }
+	return {
+		getBalances,
+		getQuote
+	}
 }
