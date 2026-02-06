@@ -1,2 +1,7 @@
 import './01-register'
 import './02-unregister'
+import './03-polymarket-auth'
+import './04-polymarket-balance'
+import './05-polymarket-approve'
+import './06-polymarket-markets'
+import './07-polymarket-buy'

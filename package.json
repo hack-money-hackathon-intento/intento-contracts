@@ -13,12 +13,22 @@
 		"task:register:allMain": "hardhat 01-register --network 'Base' && hardhat 01-register --network 'OP Mainnet' && hardhat 01-register --network 'Polygon'",
 		"task:unregister": "hardhat 02-unregister --network",
 		"task:unregister:allMain": "hardhat 02-unregister --network 'Base' && hardhat 02-unregister --network 'OP Mainnet' && hardhat 02-unregister --network 'Polygon'",
+		"task:polymarket:auth": "hardhat 03-polymarket-auth",
+		"task:polymarket:balance": "hardhat 04-polymarket-balance",
+		"task:polymarket:approve": "hardhat 05-polymarket-approve",
+		"task:polymarket:markets": "hardhat 06-polymarket-markets",
+		"task:polymarket:buy": "hardhat 07-polymarket-buy",
 		"upgrade:allMain": "hardhat deploy --network 'Base' --tags upgrade && hardhat deploy --network 'OP Mainnet' --tags upgrade && hardhat deploy --network 'Polygon' --tags upgrade"
 	},
 	"dependencies": {
 		"@openzeppelin/contracts": "^5.4.0",
 		"@openzeppelin/contracts-upgradeable": "^5.4.0",
+		"@polymarket/builder-relayer-client": "^0.0.8",
+		"@polymarket/builder-signing-sdk": "^0.0.8",
+		"@polymarket/clob-client": "^5.2.1",
 		"axios": "^1.13.4",
+		"dotenv": "^17.2.3",
+		"ethers": "5",
 		"hardhat": "^2.28.4",
 		"hardhat-deploy": "^1.0.4",
 		"viem": "^2.45.1"
