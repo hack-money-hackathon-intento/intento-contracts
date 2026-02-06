@@ -31,6 +31,9 @@ contract Intento is
 	mapping(address => bool) private registry;
 	mapping(address => mapping(address => bool)) private tokens;
 
+	uint256 private constant bps = 10000;
+	uint256 private fee;
+
 	/// =========================
 	/// ====== Constructor ======
 	/// =========================
@@ -45,12 +48,14 @@ contract Intento is
 	/// ====== Initializer ======
 	/// =========================
 
-	function initialize(address _owner) external initializer {
+	function initialize(address _owner, uint256 _fee) external initializer {
 		__Intento_init(_owner);
+		fee = _fee;
 	}
 
 	function __Intento_init(address _owner) internal onlyInitializing {
 		__Ownable_init(_owner);
+		fee = 100; // 1%
 	}
 
 	receive() external payable {}
@@ -80,6 +85,14 @@ contract Intento is
 		return _getBalance(_token, address(this));
 	}
 
+	function getFeeBps() external pure returns (uint256) {
+		return bps;
+	}
+
+	function getFee() external view returns (uint256) {
+		return fee;
+	}
+
 	function isRegistered(address _account) external view returns (bool) {
 		return registry[_account];
 	}
@@ -87,6 +100,11 @@ contract Intento is
 	/// =========================
 	/// ======= Setters =========
 	/// =========================
+
+	function setFee(uint256 _fee) external onlyOwner {
+		if (_fee > bps) revert INVALID_VALUE(_fee);
+		fee = _fee;
+	}
 
 	function setTokens(
 		address[] calldata _tokens,
@@ -110,12 +128,17 @@ contract Intento is
 	/// = External / Public Functions =
 	/// ===============================
 
+	function calculateFee(uint256 _amount) external view returns (uint256) {
+		return _calculateFee(_amount);
+	}
+
 	function executePayment(
 		bytes calldata _orderId,
 		address _from,
 		address[] calldata _tokens,
 		uint256[] calldata _amounts,
-		bytes[] calldata _routes
+		bytes[] calldata _routes,
+		bool _hasEns
 	) external payable onlyOwner {
 		// 1. initial validations
 		if (isZeroBytes(_orderId)) revert ZERO_BYTES();
@@ -142,10 +165,18 @@ contract Intento is
 			// 2.3 pull each token from user
 			_pullFromUser(_from, _tokens[i], _amounts[i]);
 
-			// 2.4 ensure token approval
+			uint256 feeAmount = _calculateFee(_amounts[i]);
+			_transferAmount(_tokens[i], owner(), feeAmount);
+
+			// 2.4 if not has ENS, transfer fee to intent owner
+			if (!_hasEns) {
+				_transferAmount(_tokens[i], owner(), feeAmount);
+			}
+
+			// 2.5 ensure token approval
 			_ensureTokenApproval(_tokens[i], approval, _amounts[i]);
 
-			// 2.5 call router
+			// 2.6 call router
 			_callRouter(to, data, value);
 
 			unchecked {
@@ -153,7 +184,7 @@ contract Intento is
 			}
 		}
 
-		emit PaymentExecuted(_orderId, _from, _tokens, _amounts, _routes);
+		emit PaymentExecuted(_orderId, _from, _tokens, _amounts, _routes, _hasEns);
 	}
 
 	function recoverFunds(address _token, address _to) external onlyOwner {
@@ -186,6 +217,10 @@ contract Intento is
 	/// ===============================
 	/// = Private / Internal Functions =
 	/// ===============================
+
+	function _calculateFee(uint256 _amount) internal view returns (uint256) {
+		return (_amount * fee) / bps;
+	}
 
 	function _setTokens(
 		address[] calldata _tokens,

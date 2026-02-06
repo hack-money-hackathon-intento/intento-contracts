@@ -22,7 +22,7 @@ const deployIntento: DeployFunction = async (
 	log('----------------------------------------------------')
 	log('Deploying Intento and waiting for confirmations...')
 
-	const args: unknown[] = [deployer]
+	const args: unknown[] = [deployer, 100] // 1%
 
 	const Intento = await ethers.getContractFactory('Intento')
 
