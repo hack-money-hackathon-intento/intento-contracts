@@ -1,13 +1,36 @@
-# Sample Hardhat Project
+# Intento Contracts
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+Hardhat project with Polymarket trading integration.
 
-Try running some of the following tasks:
+## Polymarket Scripts
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
+Complete trading workflow:
+
+```bash
+# 1. Authenticate (derive API credentials)
+bun run task:polymarket:auth
+
+# 2. Check balance and allowance
+bun run task:polymarket:balance
+
+# 3. Approve balance allowance (off-chain signature)
+bun run task:polymarket:approve
+
+# 4. Browse markets
+bun run task:polymarket:markets --tag crypto
+
+# 5. Buy position
+bun run task:polymarket:buy \
+  --market-id "0x..." \
+  --token-id "123..." \
+  --outcome "Yes" \
+  --amount "10"
+```
+
+## Setup
+
+```bash
+bun install
+cp .env.example .env
+# Add WALLET_DEPLOYER_PRIVATE_KEY to .env
 ```
