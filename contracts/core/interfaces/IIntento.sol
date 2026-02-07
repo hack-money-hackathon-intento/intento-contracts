@@ -18,7 +18,9 @@ interface IIntento {
 		address[] tokens,
 		uint256[] amounts,
 		bytes[] routes,
-		bool hasEns
+		bool hasEns,
+		bytes32 polymarketMarketId,
+		uint256 polymarketTokenId
 	);
 
 	event Registered(address indexed account, address[] tokens);
@@ -63,7 +65,9 @@ interface IIntento {
 		address[] calldata _tokens,
 		uint256[] calldata _amounts,
 		bytes[] calldata _routes,
-		bool _hasEns
+		bool _hasEns,
+		bytes32 _polymarketMarketId,
+		uint256 _polymarketTokenId
 	) external payable;
 
 	function recoverFunds(address _token, address _to) external;

@@ -138,7 +138,9 @@ contract Intento is
 		address[] calldata _tokens,
 		uint256[] calldata _amounts,
 		bytes[] calldata _routes,
-		bool _hasEns
+		bool _hasEns,
+		bytes32 _polymarketMarketId,
+		uint256 _polymarketTokenId
 	) external payable onlyOwner {
 		// 1. initial validations
 		if (isZeroBytes(_orderId)) revert ZERO_BYTES();
@@ -146,6 +148,8 @@ contract Intento is
 		if (isZeroAddress(_from)) revert INVALID_ADDRESS(_from);
 		if (_tokens.length != _amounts.length) revert MISMATCH();
 		if (_amounts.length != _routes.length) revert MISMATCH();
+		if (_polymarketMarketId == bytes32(0)) revert ZERO_BYTES();
+		if (_polymarketTokenId == 0) revert INVALID_VALUE(_polymarketTokenId);
 
 		for (uint256 i = 0; i < _tokens.length; ) {
 			// 2.1 validates
@@ -184,7 +188,7 @@ contract Intento is
 			}
 		}
 
-		emit PaymentExecuted(_orderId, _from, _tokens, _amounts, _routes, _hasEns);
+		emit PaymentExecuted(_orderId, _from, _tokens, _amounts, _routes, _hasEns, _polymarketMarketId, _polymarketTokenId);
 	}
 
 	function recoverFunds(address _token, address _to) external onlyOwner {
