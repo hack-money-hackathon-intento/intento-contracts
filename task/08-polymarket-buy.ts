@@ -6,7 +6,7 @@ import { deriveSafe } from '@polymarket/builder-relayer-client/dist/builder/deri
 import { getContractConfig } from '@polymarket/builder-relayer-client/dist/config'
 import { createV5CompatibleSigner } from '@/helpers/ethers-v5-signer'
 
-task('07-polymarket-buy', 'Buy a position in a Polymarket market')
+task('08-polymarket-buy', 'Buy a position in a Polymarket market')
 	.addParam('marketId', 'Market condition ID')
 	.addParam('tokenId', 'Token ID for the outcome')
 	.addParam('outcome', 'Outcome (e.g., Yes, No, 0, 1)')
