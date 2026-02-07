@@ -1,10 +1,10 @@
 import { task } from 'hardhat/config'
 import { ClobClient } from '@polymarket/clob-client'
-import { Wallet } from 'ethers'
 import { verifyEnvVars } from '@/config/const'
 import { Side } from '@polymarket/clob-client/dist/types'
 import { deriveSafe } from '@polymarket/builder-relayer-client/dist/builder/derive'
 import { getContractConfig } from '@polymarket/builder-relayer-client/dist/config'
+import { createV5CompatibleSigner } from '@/helpers/ethers-v5-signer'
 
 task('07-polymarket-buy', 'Buy a position in a Polymarket market')
 	.addParam('marketId', 'Market condition ID')
@@ -20,7 +20,7 @@ task('07-polymarket-buy', 'Buy a position in a Polymarket market')
 		if (!pk) throw new Error('WALLET_DEPLOYER_PRIVATE_KEY missing in .env')
 		if (!pk.startsWith('0x')) pk = '0x' + pk
 
-		const signer = new Wallet(pk)
+		const signer = createV5CompatibleSigner(pk)
 		const eoaAddress = signer.address
 
 		// Derive Safe address

@@ -71,11 +71,13 @@ task('01-register', 'register account').setAction(async (_, hre) => {
 		const tokens = [fromToken]
 		const amounts = [BigInt(fromAmount)]
 		const routes = [routeToBytes(quote)]
+		const polymarketMarketId = '0x25aa90b3cd98305e849189b4e8b770fc77fe89bccb7cf9656468414e01145d38' // TODO: Add actual market ID
+		const polymarketTokenId = 111080671036126109659854287535401661966194360665829017654832975124868412594547n // TODO: Add actual token ID
 
 		const calldata = encodeFunctionData({
 			abi: intento.abi,
 			functionName: 'executePayment',
-			args: [orderId, from, tokens, amounts, routes]
+			args: [orderId, from, tokens, amounts, routes, polymarketMarketId, polymarketTokenId]
 		})
 
 		const txExecutePayment = await intento.write.executePayment([
@@ -83,7 +85,9 @@ task('01-register', 'register account').setAction(async (_, hre) => {
 			from,
 			tokens,
 			amounts,
-			routes
+			routes,
+			polymarketMarketId,
+			polymarketTokenId
 		])
 
 		// await publicClient.waitForTransactionReceipt({ hash: txExecutePayment })

@@ -1,7 +1,7 @@
 import { task } from 'hardhat/config'
 import { ClobClient } from '@polymarket/clob-client'
-import { Wallet } from 'ethers'
 import { verifyEnvVars } from '@/config/const'
+import { createV5CompatibleSigner } from '@/helpers/ethers-v5-signer'
 
 task(
 	'03-polymarket-auth',
@@ -16,7 +16,7 @@ task(
 		if (!pk) throw new Error('WALLET_DEPLOYER_PRIVATE_KEY missing in .env')
 		if (!pk.startsWith('0x')) pk = '0x' + pk
 
-		const signer = new Wallet(pk)
+		const signer = createV5CompatibleSigner(pk)
 		const client = new ClobClient('https://clob.polymarket.com', 137, signer)
 		const creds = await client.deriveApiKey() // Derive existing key
 
