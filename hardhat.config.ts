@@ -1,5 +1,6 @@
 import 'tsconfig-paths/register'
 import '@nomicfoundation/hardhat-toolbox-viem'
+import '@nomicfoundation/hardhat-ethers'
 import '@openzeppelin/hardhat-upgrades'
 import 'hardhat-deploy'
 import '@/task'
